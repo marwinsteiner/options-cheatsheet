@@ -88,22 +88,102 @@
 - Long Put Profit = $\max[K - S_T, 0] - p$
 - Short Put Profit = $p - \max[K - S_T, 0]$
 
-## Binomial Option Pricing
+# Binomial Option Pricing Formulas
 
-### Risk-Neutral Probability
-- $q = \frac{(1 + r) - d}{u - d}$
+## Single-Period Model
+
+### Basic Parameters
+- $S_0$: Initial stock price
 - $u$: Up factor
 - $d$: Down factor
-- $r$: Risk-free rate
+- $r$: Risk-free interest rate
+- $X$: Strike price
+- $T$: Time to maturity
 
-### Option Value
-- $c = \frac{[qc_u + (1-q)c_d]}{1 + r}$
-- $c_u$: Call value if stock goes up
-- $c_d$: Call value if stock goes down
+### Risk-Neutral Probability
+- $q = \frac{(1 + r) - d}{u - d}$ (Discrete compounding)
+- $q = \frac{e^{rT} - d}{u - d}$ (Continuous compounding)
 
-### Delta Hedging
-- $\Delta = \frac{c_u - c_d}{(u - d)S}$
-- $N = \frac{dc_u - uc_d}{u - d}$
+### Option Values at Maturity
+- Up state stock price: $S_u = S_0 \times u$
+- Down state stock price: $S_d = S_0 \times d$
+- Call payoff up: $c_u = \max(S_u - X, 0)$
+- Call payoff down: $c_d = \max(S_d - X, 0)$
+- Put payoff up: $p_u = \max(X - S_u, 0)$
+- Put payoff down: $p_d = \max(X - S_d, 0)$
+
+### Single-Period Option Pricing
+
+#### Discrete Compounding
+- Call: $c = \frac{1}{1 + r}[qc_u + (1-q)c_d]$
+- Put: $p = \frac{1}{1 + r}[qp_u + (1-q)p_d]$
+
+#### Continuous Compounding
+- Call: $c = e^{-rT}[qc_u + (1-q)c_d]$
+- Put: $p = e^{-rT}[qp_u + (1-q)p_d]$
+
+## Two-Period Model
+
+### Stock Price Movements
+- $S_{uu} = S_0 \times u^2$ (Up-Up)
+- $S_{ud} = S_{du} = S_0 \times u \times d$ (Up-Down or Down-Up)
+- $S_{dd} = S_0 \times d^2$ (Down-Down)
+
+### Option Values at Maturity
+- Call payoffs:
+  * $c_{uu} = \max(S_{uu} - X, 0)$
+  * $c_{ud} = \max(S_{ud} - X, 0)$
+  * $c_{dd} = \max(S_{dd} - X, 0)$
+- Put payoffs:
+  * $p_{uu} = \max(X - S_{uu}, 0)$
+  * $p_{ud} = \max(X - S_{ud}, 0)$
+  * $p_{dd} = \max(X - S_{dd}, 0)$
+
+### Two-Period Option Pricing
+
+#### Discrete Compounding
+Working backwards:
+
+1. Middle node values (at time T₁):
+   - Call up: $c_u = \frac{1}{1 + r}[qc_{uu} + (1-q)c_{ud}]$
+   - Call down: $c_d = \frac{1}{1 + r}[qc_{ud} + (1-q)c_{dd}]$
+   - Put up: $p_u = \frac{1}{1 + r}[qp_{uu} + (1-q)p_{ud}]$
+   - Put down: $p_d = \frac{1}{1 + r}[qp_{ud} + (1-q)p_{dd}]$
+
+2. Initial value (at time 0):
+   - Call: $c = \frac{1}{1 + r}[qc_u + (1-q)c_d]$
+   - Put: $p = \frac{1}{1 + r}[qp_u + (1-q)p_d]$
+
+#### Continuous Compounding
+Working backwards:
+
+1. Middle node values (at time T₁):
+   - Call up: $c_u = e^{-r\Delta t}[qc_{uu} + (1-q)c_{ud}]$
+   - Call down: $c_d = e^{-r\Delta t}[qc_{ud} + (1-q)c_{dd}]$
+   - Put up: $p_u = e^{-r\Delta t}[qp_{uu} + (1-q)p_{ud}]$
+   - Put down: $p_d = e^{-r\Delta t}[qp_{ud} + (1-q)p_{dd}]$
+
+2. Initial value (at time 0):
+   - Call: $c = e^{-r\Delta t}[qc_u + (1-q)c_d]$
+   - Put: $p = e^{-r\Delta t}[qp_u + (1-q)p_d]$
+
+Where $\Delta t = T/n$ is the time step (T/2 for two-period model)
+
+### **Direct Formula** to get from end to beginning value:
+1. Discrete Compounding:
+   $$c = \frac{1}{1+r^2}(q^2c_{uu} + 2q(1-q)c_{ud} + (1-q)^2c_{dd})$$
+   $$p = \frac{1}{1+r^2}(q^2p_{uu} + 2q(1-q)p_{ud} + (1-q)^2p_{dd})$$
+3. Continuous Compounding:
+   $$c = e^{-2r\Delta t}(q^2c_{uu} + 2q(1-q)c_{ud} + (1-q)^2c_{dd})$$
+   $$p = e^{-2r\Delta t}(q^2p_{uu} + 2q(1-q)p_{ud} + (1-q)^2p_{dd})$$
+
+### Delta Hedging Parameters
+- $\Delta_{call} = \frac{c_u - c_d}{S_0(u-d)}$
+- $\Delta_{put} = \frac{p_u - p_d}{S_0(u-d)}$
+
+### No-Arbitrage Conditions
+- $d < 1 + r < u$ (Discrete compounding)
+- $d < e^{rT} < u$ (Continuous compounding)
 
 ## Option Price Bounds
 
@@ -118,6 +198,38 @@
 - Intrinsic Value (Call) = $\max(S - K, 0)$
 - Intrinsic Value (Put) = $\max(K - S, 0)$
 - Time Value = Option Price - Intrinsic Value
+
+## Margin Calculations
+
+### Margin Call Thresholds
+
+For Short Position:
+- Margin Call Trigger Price = Initial Price + ((Initial Margin - Maintenance Margin)/(Units × Price per Unit))
+- Where:
+  * Initial Price = Original futures price
+  * Initial Margin = Initial deposit required
+  * Maintenance Margin = Minimum required balance
+  * Units = Number of units in contract
+
+For Long Position:
+- Margin Call Trigger Price = Initial Price - ((Initial Margin - Maintenance Margin)/(Units × Price per Unit))
+
+### Example Calculation
+For Q3:
+- Initial Price = $0.70
+- Initial Margin = $4,000
+- Maintenance Margin = $3,000
+- Units = 50,000
+- Price Change Threshold = ($4,000 - $3,000)/(50,000) = $0.02
+- Margin Call Price (Short) = $0.70 + $0.02 = $0.72
+
+Therefore, if futures price rises above $0.72, there will be a margin call.
+
+### General Rules
+- Short Position: Margin call when price rises above threshold
+- Long Position: Margin call when price falls below threshold
+- Loss Threshold = Initial Margin - Maintenance Margin
+- Price Move for Margin Call = Loss Threshold ÷ (Units × Price per Unit)
 
 ## Daily Price Movement
 
