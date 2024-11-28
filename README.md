@@ -237,3 +237,76 @@ Therefore, if futures price rises above $0.72, there will be a margin call.
 - $\sigma_{daily} = \sigma_{annual} \times \sqrt{\frac{1}{365}}$
 - $\sigma_{daily}$: Daily standard deviation
 - $\sigma_{annual}$: Annual volatility
+
+## Black-Scholes Option Pricing Formulas
+
+### Core Equations
+
+#### European Call Option
+
+$c = SN(d_1) - Xe^{-rT}N(d_2)$
+
+#### European Put Option
+
+$p = Xe^{-rT}N(-d_2) - SN(-d_1)$
+
+Where:
+$d_1 = \frac{\ln(S/X) + (r + \sigma^2/2)T}{\sigma\sqrt{T}}$
+
+$d_2 = d_1 - \sigma\sqrt{T}$
+
+### Parameters
+
+- $S$ = Current stock price
+- $X$ = Strike price
+- $r$ = Risk-free interest rate (continuous compounding)
+- $T$ = Time to maturity (in years)
+- $\sigma$ = Stock price volatility (annual)
+- $N(x)$ = Cumulative standard normal distribution function
+
+### Geometric Brownian Motion (GBM)
+
+#### Stock Price Process
+
+$\frac{dS}{S} = \mu dt + \sigma dZ$
+
+#### Distribution Properties
+
+- Returns distribution: $\frac{dS}{S} \sim N(\mu dt, \sigma^2dt)$
+- Log price distribution: $\ln(S_T) \sim N[\ln(S_0) + (\mu - \frac{\sigma^2}{2})T, \sigma^2T]$
+
+### Parameter Effects on Option Prices
+
+| Parameter Increase | Call Price | Put Price |
+|-------------------|------------|-----------|
+| Stock Price ($S$) | ↑          | ↓         |
+| Strike Price ($X$)| ↓          | ↑         |
+| Volatility ($\sigma$) | ↑      | ↑         |
+| Time to Mat. ($T$)| ↑          | ↑         |
+| Interest Rate ($r$)| ↑         | ↓         |
+
+### Important Properties
+
+#### American vs European Options
+
+For non-dividend paying stocks:
+
+- American calls = European calls
+- American puts > European puts
+
+#### Implied Volatility
+
+- Implied volatility is the value of $\sigma$ that makes the Black-Scholes price equal to the market price
+- Used as a measure of market expectations of future volatility
+- Often used to quote option prices in markets
+
+#### Model Assumptions
+
+1. No arbitrage opportunities
+1. Geometric Brownian motion for stock prices
+1. Constant volatility
+1. No dividends
+1. European exercise
+1. Continuous trading
+
+
